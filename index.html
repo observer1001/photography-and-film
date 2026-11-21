@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>邓先 — 摄影与影像</title>
+<style>
+:root{
+  --ink:#1B1815;
+  --ink-2:#5C564D;
+  --ink-3:#928B7C;
+  --paper:#F7F5F0;
+  --paper-2:#EFEBE2;
+  --line:#DFD9CC;
+  --accent:#A8431F;
+  --serif:"Songti SC","Noto Serif SC","Source Han Serif SC",SimSun,serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  --mono:"SF Mono",ui-monospace,Consolas,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-size:17px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+a{color:inherit}
+img{display:block}
+
+.cur-dot,.cur-ring{
+  position:fixed;top:0;left:0;pointer-events:none;z-index:9998;
+  border-radius:50%;opacity:0;transition:opacity .3s;
+}
+.cur-dot{width:6px;height:6px;background:var(--ink);margin:-3px 0 0 -3px}
+.cur-ring{
+  width:28px;height:28px;margin:-14px 0 0 -14px;
+  border:1px solid rgba(27,24,21,.4);
+  transition:opacity .3s,width .3s var(--ease),height .3s var(--ease),
+             margin .3s var(--ease),border-color .3s,background .3s;
+}
+.has-cur .cur-dot,.has-cur .cur-ring{opacity:1}
+.has-cur,.has-cur *{cursor:none !important}
+.cur-ring.grow{width:54px;height:54px;margin:-27px 0 0 -27px;border-color:var(--accent);background:rgba(168,67,31,.06)}
+
+header{
+  position:sticky;top:0;z-index:50;
+  background:rgba(247,245,240,.85);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid transparent;transition:border-color .3s;
+}
+header.scrolled{border-bottom-color:var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:baseline;gap:10px;text-decoration:none}
+.brand b{font-family:var(--serif);font-size:19px;font-weight:400;letter-spacing:.04em}
+.brand span{font-size:12px;letter-spacing:.16em;color:var(--ink-3);text-transform:uppercase}
+.nav-links{display:flex;gap:28px}
+.nav-links a{text-decoration:none;color:var(--ink-2);font-size:14px;padding:4px 0;position:relative;transition:color .2s}
+.nav-links a::after{
+  content:"";position:absolute;left:0;bottom:0;height:1px;width:0;
+  background:var(--accent);transition:width .3s var(--ease);
+}
+.nav-links a:hover,.nav-links a.on{color:var(--ink)}
+.nav-links a:hover::after,.nav-links a.on::after{width:100%}
+
+.hero{padding:120px 0 84px}
+.kicker{
+  font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 30px;display:flex;align-items:center;gap:12px;
+}
+.kicker::before{content:"";width:26px;height:1px;background:var(--accent)}
+.hero h1{
+  font-family:var(--serif);font-weight:400;
+  font-size:clamp(36px,5.7vw,74px);line-height:1.24;letter-spacing:-.01em;margin:0;
+}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.line{display:block;overflow:hidden}
+.line > i{display:block;font-style:normal;transform:translateY(108%)}
+.js .line > i{animation:riseIn 1.15s var(--ease) forwards}
+.line:nth-child(2) > i{animation-delay:.1s}
+@keyframes riseIn{to{transform:translateY(0)}}
+.hero-sub{margin:38px 0 0;max-width:30em;font-size:17px;color:var(--ink-2);line-height:1.9}
+.hero-fade{opacity:0;animation:fadeUp .9s var(--ease) .5s forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.hero-meta{
+  margin-top:46px;padding-top:20px;border-top:1px solid var(--line);
+  display:flex;flex-wrap:wrap;gap:10px 36px;font-size:13px;color:var(--ink-3);letter-spacing:.04em;
+}
+.hero-meta b{color:var(--ink-2);font-weight:400}
+
+section{padding:88px 0}
+.sec-head{margin-bottom:44px}
+.sec-no{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.12em;display:block;margin-bottom:12px}
+.sec-head h2{font-family:var(--serif);font-weight:400;font-size:clamp(25px,3vw,36px);margin:0}
+.sec-head p{margin:12px 0 0;color:var(--ink-2);font-size:15px;max-width:36em}
+
+.js .reveal{opacity:0;transform:translateY(24px);transition:opacity .85s var(--ease),transform .85s var(--ease)}
+.js .reveal.in{opacity:1;transform:none}
+
+/* ---------- route ---------- */
+.route-grid{display:grid;grid-template-columns:338px minmax(0,1fr);gap:44px;align-items:start}
+.stops{border-top:1px solid var(--line)}
+.stop{
+  display:grid;grid-template-columns:32px 1fr auto;gap:0 14px;
+  width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--line);
+  padding:11px 4px;font-family:inherit;
+  transition:background .25s,padding-left .3s var(--ease);
+}
+.stop:hover{background:var(--paper-2);padding-left:10px}
+.stop.active{background:#fff;padding-left:10px}
+.stop .idx{font-family:var(--mono);font-size:12px;color:var(--ink-3);padding-top:2px}
+.stop.active .idx{color:var(--accent)}
+.stop .name{font-size:16px;text-align:left;letter-spacing:.02em}
+.stop .cnt{
+  grid-column:3;font-family:var(--mono);font-size:12px;color:var(--ink-3);
+  padding-top:2px;letter-spacing:.06em;align-self:start;
+}
+.stop.active .cnt{color:var(--accent)}
+.stop .meta{grid-column:2 / 4;font-size:12px;color:var(--ink-3);margin-top:0;text-align:left;letter-spacing:.03em}
+.stop .bar{grid-column:2 / 4;height:1px;background:var(--line);margin-top:8px;position:relative;overflow:hidden}
+.stop .bar::after{
+  content:"";position:absolute;inset:0;background:var(--accent);
+  transform:scaleX(0);transform-origin:left;transition:transform .55s var(--ease);
+}
+.stop.active .bar::after{transform:scaleX(1)}
+
+.route-panel{position:relative;border:1px solid var(--line);background:var(--paper-2);overflow:hidden}
+#routeSvg{width:100%;height:auto;display:block}
+#routeSvg .grid{stroke:#1B1815;stroke-opacity:.055;stroke-width:1}
+#routeSvg .trail{
+  fill:none;stroke:#A8431F;stroke-opacity:.26;stroke-width:1;
+  stroke-dasharray:3 6;stroke-linecap:round;
+}
+.node{cursor:pointer}
+.node .halo{fill:#A8431F;opacity:0;transition:opacity .3s}
+.node .dot{fill:#B4AFA2;transition:fill .3s}
+.node .lbl{
+  font-family:var(--sans);
+  font-size:14px;fill:#5C564D;letter-spacing:.06em;transition:fill .3s;
+}
+.node .num{font-family:"SF Mono",Consolas,monospace;font-size:12px;fill:#928B7C}
+.node:hover .dot,.node.on .dot{fill:#A8431F}
+.node:hover .halo,.node.on .halo{opacity:.11}
+.node:hover .lbl,.node.on .lbl{fill:#1B1815}
+.panel-note{
+  position:absolute;right:12px;bottom:10px;
+  font-size:12px;color:var(--ink-3);background:rgba(247,245,240,.85);
+  padding:3px 8px;letter-spacing:.04em;
+}
+
+/* ---------- works ---------- */
+.works-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:34px 28px}
+.work{cursor:pointer}
+.thumb{
+  position:relative;aspect-ratio:4/3;overflow:hidden;border:1px solid var(--line);background:#DCD6C9;
+}
+.thumb img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .8s var(--ease),opacity .4s;
+}
+.work:hover .thumb img{transform:scale(1.045)}
+.thumb .no{
+  position:absolute;left:12px;top:10px;z-index:3;
+  font-family:var(--mono);font-size:12px;color:#fff;letter-spacing:.06em;
+  text-shadow:0 1px 6px rgba(0,0,0,.35);
+}
+.thumb::after{
+  content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:linear-gradient(to top,rgba(20,18,15,.55),rgba(20,18,15,0) 58%);
+  opacity:0;transition:opacity .45s;
+}
+.work:hover .thumb::after{opacity:1}
+.thumb .exif{
+  position:absolute;left:13px;bottom:11px;z-index:3;
+  font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.92);letter-spacing:.04em;
+  opacity:0;transform:translateY(7px);transition:all .4s var(--ease);
+}
+.work:hover .thumb .exif{opacity:1;transform:none}
+.work h3{
+  font-family:var(--serif);font-weight:400;font-size:17px;
+  margin:15px 0 6px;line-height:1.45;transition:color .25s;
+}
+.work:hover h3{color:var(--accent)}
+.work .meta{font-size:13px;color:var(--ink-3);margin:0}
+.work .roles{
+  font-size:13px;color:var(--ink-3);margin:5px 0 0;
+  line-height:1.75;letter-spacing:.02em;
+}
+.work .type{
+  display:inline-block;margin-top:9px;font-size:12px;letter-spacing:.12em;
+  color:var(--accent);text-transform:uppercase;
+}
+
+/* ---------- films ---------- */
+.films .thumb{aspect-ratio:16/9;background:#26231F}
+.films .thumb img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .8s var(--ease);
+}
+.films .work:hover .thumb img{transform:scale(1.04)}
+.film .play{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:52px;height:52px;border-radius:50%;z-index:4;
+  border:1px solid rgba(255,255,255,.8);
+  background:rgba(20,18,15,.32);
+  backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity .3s,background .3s,transform .3s var(--ease);
+}
+.film .play::before{
+  content:"";display:block;width:0;height:0;
+  border-left:13px solid #fff;border-top:8px solid transparent;border-bottom:8px solid transparent;
+  margin-left:4px;
+}
+.film:hover .play{background:rgba(168,67,31,.55);transform:translate(-50%,-50%) scale(1.06)}
+.film .dur{
+  position:absolute;right:11px;bottom:10px;z-index:4;
+  font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.9);
+  letter-spacing:.06em;text-shadow:0 1px 5px rgba(0,0,0,.5);
+}
+
+/* film lightbox */
+.flb{
+  position:fixed;inset:0;z-index:9999;background:rgba(16,14,12,.97);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .35s;padding:48px;
+}
+.flb.open{opacity:1;pointer-events:auto}
+.flb-inner{width:min(1120px,100%)}
+.flb video{
+  width:100%;aspect-ratio:16/9;max-height:76vh;object-fit:contain;
+  background:#000;display:block;
+  transform:scale(.98);transition:transform .45s var(--ease);
+}
+.flb.open video{transform:scale(1)}
+.flb.loading::before{
+  content:"载入中…";position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);z-index:2;
+  color:rgba(255,255,255,.55);font-size:13px;letter-spacing:.16em;
+}
+.flb-cap{
+  margin-top:15px;display:flex;justify-content:space-between;
+  align-items:baseline;gap:24px;flex-wrap:wrap;
+}
+.flb-cap b{font-family:var(--serif);font-weight:400;font-size:17px;color:#fff;letter-spacing:.02em}
+.flb-cap span{font-size:13px;color:rgba(255,255,255,.5);letter-spacing:.05em}
+
+/* ---------- method ---------- */
+.method{background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.method-lead{
+  font-size:17px;color:var(--ink-2);line-height:1.95;
+  max-width:42em;margin:0 0 46px;
+}
+.method-lead b{color:var(--ink);font-weight:400}
+.chart{border:1px solid var(--line);background:var(--paper);padding:26px 24px 18px;max-width:820px}
+.chart .cap{font-size:13px;color:var(--ink-3);margin:0 0 4px;letter-spacing:.04em}
+.chart .big{font-family:var(--serif);font-size:22px;margin:0 0 14px;line-height:1.4}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart .axis{stroke:#DFD9CC;stroke-width:1}
+.chart .tick{font-family:"SF Mono",Consolas,monospace;font-size:12px;fill:#928B7C}
+.chart .pt{fill:#A8431F;opacity:.72}
+.chart .trend{stroke:#A8431F;stroke-width:1.2;stroke-dasharray:4 4;opacity:.5}
+.chart .note{font-size:12px;color:var(--ink-3);margin-top:10px;letter-spacing:.02em;line-height:1.6}
+
+/* ---------- about ---------- */
+.about-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:64px;align-items:start}
+.about p{font-size:16px;color:var(--ink-2);line-height:2;margin:0 0 16px}
+.gear{display:grid;gap:10px;margin-top:28px}
+.gear div{display:flex;gap:16px;font-size:14px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.gear div span:first-child{width:64px;flex:none;color:var(--ink-3);letter-spacing:.06em}
+.gear div span:last-child{color:var(--ink-2)}
+
+footer{padding:76px 0 52px}
+.foot-grid{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap}
+footer h2{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.3vw,41px);margin:0 0 16px;line-height:1.4}
+.foot-bottom{
+  margin-top:56px;padding-top:20px;border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;font-size:13px;color:var(--ink-3);
+  letter-spacing:.06em;flex-wrap:wrap;gap:10px;
+}
+
+/* ---------- lightbox ---------- */
+.lb{
+  position:fixed;inset:0;z-index:9999;background:rgba(23,21,18,.96);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .35s;padding:40px;
+}
+.lb.open{opacity:1;pointer-events:auto}
+.lb img{max-width:100%;max-height:82vh;object-fit:contain;transform:scale(.985);transition:transform .4s var(--ease)}
+.lb.open img{transform:scale(1)}
+.lb .cap{
+  position:absolute;left:50%;bottom:24px;transform:translateX(-50%);
+  text-align:center;color:rgba(255,255,255,.68);font-size:13px;letter-spacing:.06em;line-height:1.8;
+}
+.lb .cap b{display:block;color:#fff;font-weight:400;font-size:14px;letter-spacing:.08em;margin-bottom:5px}
+
+@media (max-width:960px){
+  .wrap{padding:0 22px}
+  .hero{padding:78px 0 56px}
+  section{padding:64px 0}
+  .route-grid{grid-template-columns:1fr;gap:26px}
+  .works-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 18px}
+  .about-grid{grid-template-columns:1fr;gap:32px}
+  .nav-links{gap:15px}
+  .nav-links a{font-size:14px}
+  .cur-dot,.cur-ring{display:none}
+  .has-cur,.has-cur *{cursor:auto !important}
+  .lb{padding:18px}
+  .flb{padding:14px}
+  .flb video{max-height:70vh}
+  .flb-cap{margin-top:10px}
+}
+@media (max-width:560px){
+  .brand span{display:none}
+  .works-grid{grid-template-columns:1fr}
+  .nav-links{gap:12px}
+  .nav-links a{font-size:13px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none !important;transition:none !important}
+  .js .reveal{opacity:1;transform:none}
+  .js .line > i{transform:none}
+  .cur-dot,.cur-ring{display:none}
+}
+</style>
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+<div class="cur-dot"></div>
+<div class="cur-ring"></div>
+
+<header id="top">
+  <div class="wrap nav">
+    <a class="brand" href="#top"><b>邓先</b><span>Photography &amp; Film</span></a>
+    <nav class="nav-links">
+      <a href="#route">足迹</a>
+      <a href="#photos">摄影</a>
+      <a href="#films">影像</a>
+      <a href="#method">方法</a>
+      <a href="#about">关于</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <div class="wrap">
+      <p class="kicker">摄影 &amp; 影像 / 2024—2026</p>
+      <h1>
+        <span class="line"><i>九个城市，</i></span>
+        <span class="line"><i>一些被留住的<em>光</em>。</i></span>
+      </h1>
+      <p class="hero-sub hero-fade">
+        邓先。用相机和无人机记录路过的地方，也用数据回头看自己拍的东西。<br>
+        这里记着我去过哪儿、看见了什么，还有后来想明白的一点事。
+      </p>
+      <div class="hero-meta hero-fade">
+        <span><b>21</b> 张照片</span>
+        <span><b>5</b> 支短片</span>
+        <span><b>9</b> 个地点</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="route">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="sec-no">01 — 足迹</span>
+        <h2>去过的坐标</h2>
+        <p>从三亚到秦皇岛，九个地方。（点一下名字，照片就只剩那儿的）</p>
+      </div>
+
+      <div class="route-grid">
+        <div class="stops reveal" id="stops"></div>
+        <div class="route-panel reveal" style="transition-delay:.1s">
+          <svg id="routeSvg" viewBox="0 0 720 620" role="img" aria-label="九个拍摄地点的分布"></svg>
+          <span class="panel-note">示意图</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="photos">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="sec-no">02 — 摄影</span>
+        <h2 id="photoTitle">全部照片</h2>
+      </div>
+      <div class="works-grid" id="photoGrid"></div>
+    </div>
+  </section>
+
+  <section id="films">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="sec-no">03 — 影像</span>
+          <h2>五支片子</h2>
+        </div>
+      <div class="works-grid films" id="filmGrid"></div>
+    </div>
+  </section>
+
+  <section id="method" class="method">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="sec-no">04 — 一点数据</span>
+        <h2>做了三个月的栏目，顺手算了一下后台数据。</h2>
+        <p>22 条，三个月，我发现流量是有迹可循的。</p>
+      </div>
+
+      <p class="method-lead reveal">
+        播放最高的选题，转发率反而垫底；播放只有一半的，转发率最高。
+        后来，我更愿意讲「他后来怎么样了」，而不是只讲他有多难。
+      </p>
+
+      <div class="chart reveal">
+        <p class="cap">六个选题 / 22 条视频</p>
+        <p class="big">播放越高，转发率越低</p>
+        <svg id="barRate" viewBox="0 0 620 320" aria-label="各选题平均播放与平均转发率对比"></svg>
+        <p class="note">柱为平均播放，点为平均转发率。</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="wrap">
+      <div class="about-grid">
+        <div class="reveal">
+          <span class="sec-no">05 — 关于</span>
+          <h2 style="font-family:var(--serif);font-weight:400;font-size:clamp(24px,2.7vw,32px);margin:0">邓先</h2>
+        </div>
+        <div class="reveal">
+          <p>
+            在广东读书，专业是数据科学。摄影和拍片是另一条线，但从高中开始，一直拍到现在。
+          </p>
+          <p>
+            拍得最多的是天空和远处的东西。
+          </p>
+          <p>
+            做过文旅宣传片、校园原创栏目、人物纪实短片。
+            最喜欢的还是那些没人让我拍、我自己想拍的画面。
+          </p>
+          <div class="gear">
+            <div><span>相机</span><span>Sony A7 IV · Canon EOS-1D Mark IV · Canon 7D</span></div>
+            <div><span>航拍</span><span>DJI Mavic Air 2</span></div>
+            <div><span>后期</span><span>Premiere Pro · Lightroom · Photoshop</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="reveal">
+        <h2>照片和片子，<br>都在这儿了。</h2>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 邓先</span>
+      <span>我的邮箱 3021149750@qq.com</span>
+      <span>广东 · 寒暑假可赴北京</span>
+    </div>
+  </div>
+</footer>
+
+<div class="lb" id="lb">
+  <img id="lbImg" src="" alt="">
+  <div class="cap" id="lbCap"></div>
+</div>
+
+<div class="flb" id="flb">
+  <div class="flb-inner">
+    <video id="flbVideo" controls playsinline preload="metadata"></video>
+    <div class="flb-cap">
+      <b id="flbTitle"></b>
+      <span id="flbMeta"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   数据
+   ============================================================ */
+
+const CAM = {
+  'FC3170':'DJI Mavic Air 2',
+  'Canon EOS-1D Mark IV':'Canon 1D Mark IV',
+  'Canon EOS 7D':'Canon 7D',
+  'ILCE-7M4':'Sony A7 IV'
+};
+
+const photos = [
+  {c:'三亚',  s:'assets/photos/DJI_0200-3.jpg',                m:'FC3170', f:4,   a:2.8, t:'1/80',   i:100},
+  {c:'三亚',  s:'assets/photos/DJI_0213-已增强-降噪-7.jpg',      m:'FC3170', f:4,   a:2.8, t:'1/1000', i:100},
+
+  {c:'三门峡', s:'assets/photos/BJ5Q4978-已增强-降噪.jpg',       m:'Canon EOS-1D Mark IV', f:200, a:9.0, t:'1/2000', i:500},
+  {c:'三门峡', s:'assets/photos/BJ5Q5767-已增强-降噪.jpg',       m:'Canon EOS-1D Mark IV', f:200, a:7.1, t:'1/3200', i:400},
+  {c:'三门峡', s:'assets/photos/BJ5Q5874-已增强-降噪.jpg',       m:'Canon EOS-1D Mark IV', f:200, a:7.1, t:'1/2500', i:1600},
+
+  {c:'开封',  s:'assets/photos/BJ5Q1464-已增强-降噪-2.jpg',      m:'Canon EOS-1D Mark IV', f:0, a:0, t:'', i:0},
+  {c:'开封',  s:'assets/photos/BJ5Q1518-已增强-降噪.jpg',        m:'Canon EOS-1D Mark IV', f:0, a:0, t:'', i:0},
+  {c:'开封',  s:'assets/photos/BJ5Q1813-已增强-降噪.jpg',        m:'Canon EOS-1D Mark IV', f:0, a:0, t:'', i:0},
+  {c:'开封',  s:'assets/photos/BJ5Q1905.jpg',                  m:'Canon EOS-1D Mark IV', f:0, a:0, t:'', i:0},
+
+  {c:'佛山',  s:'assets/photos/_DSC2478.jpg',                  m:'ILCE-7M4', f:161, a:2.8, t:'1/400', i:100},
+  {c:'佛山',  s:'assets/photos/_DSC2494.jpg',                  m:'ILCE-7M4', f:180, a:5.0, t:'1/400', i:100},
+  {c:'佛山',  s:'assets/photos/_DSC2501.jpg',                  m:'ILCE-7M4', f:21,  a:4.5, t:'1/200', i:100},
+  {c:'佛山',  s:'assets/photos/_DSC2511-Pano.jpg',             m:'ILCE-7M4', f:22,  a:4.5, t:'1/320', i:100},
+
+  {c:'天津',  s:'assets/photos/2025129.jpg',                   m:'Canon EOS-1D Mark IV', f:80, a:4.0, t:'1/1250', i:100},
+
+  {c:'珠海',  s:'assets/photos/_MG_0068-已增强-降噪.jpg',        m:'Canon EOS 7D', f:87,  a:5.6, t:'1/100', i:3200},
+  {c:'珠海',  s:'assets/photos/_MG_0109-已增强-降噪.jpg',        m:'Canon EOS 7D', f:75,  a:5.6, t:'1/160', i:3200},
+
+  {c:'盐城',  s:'assets/photos/BJ5Q8695.jpg',                  m:'Canon EOS-1D Mark IV', f:200, a:2.8, t:'1/1000', i:100},
+
+  {c:'秦皇岛', s:'assets/photos/BJ5Q4153-已增强-降噪.jpg',       m:'Canon EOS-1D Mark IV', f:200, a:5.6, t:'1/2000', i:800},
+  {c:'秦皇岛', s:'assets/photos/BJ5Q4230-已增强-降噪.jpg',       m:'Canon EOS-1D Mark IV', f:200, a:5.6, t:'1/2000', i:250},
+
+  {c:'郑州',  s:'assets/photos/BJ5Q7778.jpg',                  m:'Canon EOS-1D Mark IV', f:0, a:0, t:'', i:0},
+  {c:'郑州',  s:'assets/photos/BJ5Q7938.jpg',                  m:'Canon EOS-1D Mark IV', f:0, a:0, t:'', i:0}
+];
+
+const films = [
+  {no:'01', title:'寻迹芦苞', meta:'文旅宣传片 / 2026 · 3′49″',
+   roles:'策划 · 脚本 · 航拍 · 拍摄 · 剪辑 · 字幕 · 调色',
+   src:'assets/videos/film-01.mp4', poster:'assets/covers/封面.jpg'},
+  {no:'02', title:'联科青年说 · 第十二期', meta:'校园栏目 / 2026 · 4′25″',
+   roles:'策划 · 脚本 · 拍摄 · 剪辑 · 字幕 · 包装',
+   src:'assets/videos/film-02.mp4', poster:'assets/covers/22联科青年说十一-封面.jpg'},
+  {no:'03', title:'联科青年说 · 第一期', meta:'校园栏目 / 2025 · 6′06″',
+   roles:'策划 · 脚本 · 拍摄 · 剪辑 · 字幕 · 包装',
+   src:'assets/videos/film-03.mp4', poster:'assets/covers/联科青年说一-封面.jpg'},
+  {no:'04', title:'"语"你会师 · 第三期', meta:'校园栏目 / 2025 · 2′23″',
+   roles:'策划 · 脚本 · 拍摄 · 剪辑 · 字幕',
+   src:'assets/videos/film-04.mp4', poster:'assets/covers/16语你会师三-封面.jpg'},
+  {no:'05', title:'2025 校运动会', meta:'活动记录 / 2025 · 1′20″',
+   roles:'拍摄 · 剪辑 · 包装',
+   src:'assets/videos/film-05.mp4', poster:'assets/covers/11月22日3-封面.jpg'}
+];
+
+const coords = [
+  {n:'三亚',  lat:18.25, lng:109.51, dx:18,  dy:5,   anchor:'start'},
+  {n:'三门峡', lat:34.77, lng:111.20, dx:-14, dy:-10, anchor:'end'},
+  {n:'郑州',  lat:34.75, lng:113.63, dx:-14, dy:28,  anchor:'end'},
+  {n:'开封',  lat:34.80, lng:114.31, dx:14,  dy:-12, anchor:'start'},
+  {n:'佛山',  lat:23.02, lng:113.12, dx:-16, dy:26,  anchor:'end'},
+  {n:'珠海',  lat:22.27, lng:113.58, dx:16,  dy:26,  anchor:'start'},
+  {n:'天津',  lat:39.08, lng:117.20, dx:0,   dy:-20, anchor:'middle'},
+  {n:'秦皇岛', lat:39.94, lng:119.60, dx:0,   dy:34,  anchor:'middle'},
+  {n:'盐城',  lat:33.35, lng:120.16, dx:-16, dy:26,  anchor:'end'}
+];
+
+/* ============================================================
+   航迹
+   ============================================================ */
+
+const VW = 720, VH = 620, PX = 60, PT = 50, PB = 70, PR = 70;
+const lngMin = 109.51, lngMax = 120.16, latMin = 18.25, latMax = 39.94;
+
+const px = lng => PX + (lng - lngMin) / (lngMax - lngMin) * (VW - PX - PR);
+const py = lat => (VH - PB) - (lat - latMin) / (latMax - latMin) * (VH - PT - PB);
+const countOf = n => photos.filter(p => p.c === n).length;
+
+(function drawRoute(){
+  const svg = document.getElementById('routeSvg');
+  let h = '';
+
+  for(let i = 1; i < 7; i++){
+    const y = PT + (VH - PT - PB) * i / 7;
+    h += `<line class="grid" x1="${PX}" y1="${y.toFixed(1)}" x2="${VW - PR}" y2="${y.toFixed(1)}"/>`;
+  }
+  for(let i = 0; i < 4; i++){
+    const x = PX + (VW - PX - PR) * (i + .5) / 4;
+    h += `<line class="grid" x1="${x.toFixed(1)}" y1="${PT}" x2="${x.toFixed(1)}" y2="${VH - PB}"/>`;
+  }
+
+  const byLng = [...coords].sort((a, b) => a.lng - b.lng);
+  h += `<polyline class="trail" points="${
+    byLng.map(c => px(c.lng).toFixed(1) + ',' + py(c.lat).toFixed(1)).join(' ')
+  }"/>`;
+
+  coords.forEach(c => {
+    const x = px(c.lng), y = py(c.lat), n = countOf(c.n);
+    const r = 4 + Math.min(n, 4) * .9;
+    h += `<g class="node" data-city="${c.n}" transform="translate(${x.toFixed(1)},${y.toFixed(1)})">
+      <circle class="halo" cx="0" cy="0" r="${(r + 12).toFixed(1)}"/>
+      <circle class="dot" cx="0" cy="0" r="${r.toFixed(1)}"/>
+      <text class="lbl" x="${c.dx}" y="${c.dy}" text-anchor="${c.anchor}">${c.n}<tspan class="num" dx="7">${n}</tspan></text>
+    </g>`;
+  });
+
+  svg.innerHTML = h;
+  svg.querySelectorAll('.node').forEach(g => {
+    g.addEventListener('click', () => selectCity(g.dataset.city));
+  });
+})();
+
+/* ============================================================
+   地点列表
+   ============================================================ */
+
+const stopsEl = document.getElementById('stops');
+const photoGrid = document.getElementById('photoGrid');
+let activeCity = null;
+
+stopsEl.innerHTML = coords.map((c, i) => `
+  <button class="stop" data-city="${c.n}">
+    <span class="idx">${String(i + 1).padStart(2, '0')}</span>
+    <span class="name">${c.n}</span>
+    <span class="cnt">${countOf(c.n)}</span>
+    <span class="meta">${c.lat.toFixed(2)}°N / ${c.lng.toFixed(2)}°E</span>
+    <span class="bar"></span>
+  </button>
+`).join('');
+
+stopsEl.addEventListener('click', e => {
+  const b = e.target.closest('.stop');
+  if(b) selectCity(b.dataset.city);
+});
+
+/* ============================================================
+   照片
+   ============================================================ */
+
+const exifLine = p => {
+  const bits = [];
+  if(p.m) bits.push(CAM[p.m] || p.m);
+  if(p.f) bits.push(p.f + 'mm');
+  if(p.a) bits.push('f/' + p.a);
+  if(p.t) bits.push(p.t);
+  if(p.i) bits.push('ISO ' + p.i);
+  return bits.join(' · ');
+};
+
+function renderPhotos(){
+  const list = activeCity ? photos.filter(p => p.c === activeCity) : photos;
+
+  photoGrid.innerHTML = list.map(p => {
+    const i = photos.indexOf(p);
+    return `<article class="work" data-i="${i}">
+      <div class="thumb">
+        <span class="no">${String(i + 1).padStart(2, '0')}</span>
+        <img src="${p.s}" loading="lazy" alt="${p.c}">
+        <span class="exif">${exifLine(p)}</span>
+      </div>
+      <h3>${p.c} · ${String(i + 1).padStart(2, '0')}</h3>
+      <p class="meta">${CAM[p.m] || '未知机型'}${p.f ? ' / ' + p.f + 'mm' : ''}</p>
+      <span class="type">photography</span>
+    </article>`;
+  }).join('');
+
+  document.getElementById('photoTitle').textContent = activeCity ? activeCity + '的照片' : '全部照片';
+
+  photoGrid.querySelectorAll('.work').forEach(el => {
+    el.addEventListener('click', () => openLb(+el.dataset.i));
+  });
+}
+
+function selectCity(city){
+  activeCity = (activeCity === city) ? null : city;
+
+  document.querySelectorAll('.stop').forEach(b => {
+    b.classList.toggle('active', b.dataset.city === activeCity);
+  });
+  document.querySelectorAll('.node').forEach(g => {
+    g.classList.toggle('on', g.dataset.city === activeCity);
+  });
+
+  renderPhotos();
+
+  if(activeCity){
+    const y = document.getElementById('photos').getBoundingClientRect().top + scrollY - 66;
+    scrollTo({top:y, behavior:'smooth'});
+  }
+}
+
+renderPhotos();
+
+/* ============================================================
+   影片
+   ============================================================ */
+
+document.getElementById('filmGrid').innerHTML = films.map((f, i) => `
+  <article class="work film" data-i="${i}">
+    <div class="thumb">
+      <span class="no">${f.no}</span>
+      <img src="${f.poster}" alt="${f.title}" loading="lazy">
+      <button class="play" aria-label="播放 ${f.title}"></button>
+      <span class="dur">${f.meta.split('· ').pop()}</span>
+    </div>
+    <h3>${f.title}</h3>
+    <p class="meta">${f.meta}</p>
+    <p class="roles">${f.roles}</p>
+    <span class="type">film</span>
+  </article>
+`).join('');
+
+document.querySelectorAll('.film').forEach(card => {
+  card.addEventListener('click', () => openFilm(+card.dataset.i));
+});
+
+/* ============================================================
+   柱状图 · 播放 vs 转发率
+   ============================================================ */
+
+(function barRate(){
+  const data = [
+    {n:'家长特辑', v:8797, r:1.97, k:3},
+    {n:'高考应援', v:4511, r:3.13, k:1},
+    {n:'励志名校', v:3600, r:3.03, k:8},
+    {n:'职业人生', v:2960, r:2.31, k:3},
+    {n:'校园品牌', v:2405, r:2.16, k:5},
+    {n:'语言学习', v:1788, r:2.86, k:2}
+  ];
+
+  const W = 620, H = 320;
+  const L = 46, R = 26, T = 34, B = 80;
+  const base = H - B;
+  const hMax = base - T;
+  const vMax = 9000, rMin = 1.4, rMax = 3.5;
+
+  const gap = (W - L - R) / data.length;
+  const barW = 38;
+
+  let h = '';
+
+  [0, 3000, 6000, 9000].forEach(v => {
+    const y = base - v / vMax * hMax;
+    h += `<line class="axis" x1="${L}" y1="${y.toFixed(1)}" x2="${W - R}" y2="${y.toFixed(1)}" stroke-opacity=".5"/>`;
+    h += `<text class="tick" x="${L - 11}" y="${(y + 3.5).toFixed(1)}" text-anchor="end">${v ? v / 1000 + 'k' : '0'}</text>`;
+  });
+
+  const pts = [];
+
+  data.forEach((d, i) => {
+    const cx = L + gap * (i + .5);
+    const bh = d.v / vMax * hMax;
+    const by = base - bh;
+
+    h += `<rect x="${(cx - barW / 2).toFixed(1)}" y="${by.toFixed(1)}" width="${barW}" height="${bh.toFixed(1)}" fill="#1B1815" fill-opacity=".13"/>`;
+    h += `<text x="${cx.toFixed(1)}" y="${(base + 20).toFixed(1)}" text-anchor="middle" style="font-family:var(--sans);font-size:13px;fill:#5C564D">${d.n}</text>`;
+    h += `<text class="tick" x="${cx.toFixed(1)}" y="${(base + 37).toFixed(1)}" text-anchor="middle" style="fill:#928B7C;font-size:12px">n=${d.k}</text>`;
+
+    const ry = base - (d.r - rMin) / (rMax - rMin) * hMax;
+    pts.push([cx, ry]);
+  });
+
+  h += `<line class="axis" x1="${L}" y1="${base}" x2="${W - R}" y2="${base}"/>`;
+  h += `<polyline fill="none" stroke="#A8431F" stroke-width="1.4" stroke-opacity=".45"
+        points="${pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ')}"/>`;
+
+  data.forEach((d, i) => {
+    const [cx, ry] = pts[i];
+    h += `<circle cx="${cx.toFixed(1)}" cy="${ry.toFixed(1)}" r="4.2" fill="#A8431F"/>`;
+    h += `<text x="${cx.toFixed(1)}" y="${(ry - 11).toFixed(1)}" text-anchor="middle"
+          style="font-family:'SF Mono',Consolas,monospace;font-size:12px;fill:#A8431F">${d.r}%</text>`;
+  });
+
+  document.getElementById('barRate').innerHTML = h;
+})();
+
+/* ============================================================
+   灯箱
+   ============================================================ */
+
+const lb = document.getElementById('lb');
+const lbImg = document.getElementById('lbImg');
+const lbCap = document.getElementById('lbCap');
+
+function openLb(i){
+  const p = photos[i];
+  lbImg.src = p.s;
+  lbImg.alt = p.c;
+  lbCap.innerHTML = `<b>${p.c} · ${String(i + 1).padStart(2, '0')}</b>${exifLine(p)}`;
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLb(){
+  lb.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+lb.addEventListener('click', closeLb);
+
+/* ---------- 影片播放器 ---------- */
+
+const flb = document.getElementById('flb');
+const flbVideo = document.getElementById('flbVideo');
+const flbTitle = document.getElementById('flbTitle');
+const flbMeta = document.getElementById('flbMeta');
+
+let filmToken = 0;
+let currentBlob = null;
+const IS_LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+
+async function openFilm(i){
+  const f = films[i];
+  if(!f) return;
+
+  const token = ++filmToken;
+
+  if(!flbVideo.paused) flbVideo.pause();
+  flbVideo.removeAttribute('src');
+  flbVideo.poster = f.poster;
+
+  flbTitle.textContent = f.title;
+  flbMeta.textContent = f.meta;
+
+  flb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  /* 线上服务器支持分段请求，直接流式播放；
+     本地预览的静态服务不支持，需先取回整段再播，否则进度条拖不动 */
+  if(!IS_LOCAL){
+    flbVideo.src = f.src;
+    flbVideo.load();
+    flbVideo.play().catch(() => {});
+    return;
+  }
+
+  flb.classList.add('loading');
+
+  try{
+    const res = await fetch(f.src);
+    const blob = await res.blob();
+    if(token !== filmToken) return;
+
+    if(currentBlob) URL.revokeObjectURL(currentBlob);
+    currentBlob = URL.createObjectURL(blob);
+
+    flbVideo.src = currentBlob;
+    flbVideo.load();
+    flb.classList.remove('loading');
+    flbVideo.play().catch(() => {});
+  }catch(err){
+    flb.classList.remove('loading');
+  }
+}
+
+function closeFilm(){
+  if(flbVideo.currentTime > 0) flbVideo.pause();
+  flb.classList.remove('open');
+  document.body.style.overflow = '';
+  setTimeout(() => {
+    flbVideo.removeAttribute('src');
+    flbVideo.load();
+  }, 340);
+}
+
+flb.addEventListener('click', e => {
+  if(e.target === flb) closeFilm();
+});
+
+addEventListener('keydown', e => {
+  if(e.key !== 'Escape') return;
+  if(flb.classList.contains('open')) closeFilm();
+  else closeLb();
+});
+
+/* ============================================================
+   光标 / 揭示 / 导航
+   ============================================================ */
+
+(function(){
+  if(!matchMedia('(pointer:fine)').matches) return;
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+
+  const dot = document.querySelector('.cur-dot');
+  const ring = document.querySelector('.cur-ring');
+  let mx = -100, my = -100, rx = -100, ry = -100;
+
+  document.documentElement.classList.add('has-cur');
+
+  addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    dot.style.transform = `translate(${mx}px,${my}px)`;
+  }, {passive:true});
+
+  (function loop(){
+    rx += (mx - rx) * .16;
+    ry += (my - ry) * .16;
+    ring.style.transform = `translate(${rx}px,${ry}px)`;
+    requestAnimationFrame(loop);
+  })();
+
+  document.addEventListener('mouseover', e => {
+    ring.classList.toggle('grow', !!e.target.closest('a,button,.node,.work'));
+  });
+})();
+
+const io = new IntersectionObserver(es => {
+  es.forEach(en => {
+    if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+  });
+}, {threshold:.12, rootMargin:'0px 0px -50px 0px'});
+
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+const navLinks = [...document.querySelectorAll('.nav-links a')];
+const secIO = new IntersectionObserver(es => {
+  es.forEach(en => {
+    if(!en.isIntersecting) return;
+    navLinks.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + en.target.id));
+  });
+}, {rootMargin:'-45% 0px -50% 0px'});
+
+['route','photos','films','method','about'].forEach(id => {
+  const el = document.getElementById(id);
+  if(el) secIO.observe(el);
+});
+
+addEventListener('scroll', () => {
+  document.querySelector('header').classList.toggle('scrolled', scrollY > 10);
+}, {passive:true});
+</script>
+</body>
+</html>
